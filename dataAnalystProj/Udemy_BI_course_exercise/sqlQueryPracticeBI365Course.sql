@@ -137,3 +137,12 @@ order by 1;
 select *
 from dept_emp
 limit 100;
+
+
+-- joins --
+select
+e.emp_no, dm.dept_no, dep.dept_name, e.first_name, e.last_name, e.birth_date, dm.from_date
+from employees e 
+inner join dept_manager dm on e.emp_no = dm.emp_no
+inner join departments dep on dep.dept_no = dm.dept_no
+order by dm.dept_no;
