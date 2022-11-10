@@ -141,8 +141,92 @@ limit 100;
 
 -- joins --
 select
-e.emp_no, dm.dept_no, dep.dept_name, e.first_name, e.last_name, e.birth_date, dm.from_date
+e.emp_no, dm.dept_no, dep.dept_name,t.title, e.first_name, e.last_name, t.from_date
 from employees e 
 inner join dept_manager dm on e.emp_no = dm.emp_no
 inner join departments dep on dep.dept_no = dm.dept_no
-order by dm.dept_no;
+join titles t on t.emp_no = e.emp_no
+order by dm.dept_no, from_date;
+
+select
+e.emp_no, dm.dept_no, e.first_name, e.last_name, dm.from_date
+from employees e
+left join dept_manager dm on e.emp_no = dm.emp_no
+where
+e.last_name = 'Markovitch'
+order by dm.dept_no desc, e.emp_no;
+
+-- course req : set @@global.sql_mode := replace(@@global.sql_mode, 'ONLY_FULL_GROUP_BY', '');
+-- to reset: set @@global.sql_mode := concat('ONLY_FULL_GROUP_BY,', @@global.sql_mode);
+
+select
+e.emp_no, t.title, e.first_name, e.last_name, t.from_date
+from employees e
+join titles t on t.emp_no = e.emp_no
+where
+e.first_name = 'Margareta' and e.last_name = 'Markovitch'
+order by t.from_date;
+
+select 
+dm.*, dep.*
+from dept_manager dm
+cross join departments dep 
+where
+dep.dept_no like '%9';
+
+select
+dep.*, e.*
+from employees e
+cross join departments dep 
+where
+e.emp_no < 10011
+order by emp_no, dept_name;
+
+select
+ t.title, gender, count(e.gender) as gendercount
+from employees e
+join titles t on e.emp_no = t.emp_no
+where t.title = 'Manager'
+group by gender;
+
+SELECT
+
+    *
+
+FROM
+
+    (SELECT
+
+        e.emp_no,
+
+            e.first_name,
+
+            e.last_name,
+
+            NULL AS dept_no,
+
+            NULL AS from_date
+
+    FROM
+
+        employees e
+
+    WHERE
+
+        last_name = 'Denis' UNION SELECT
+
+        NULL AS emp_no,
+
+            NULL AS first_name,
+
+            NULL AS last_name,
+
+            dm.dept_no,
+
+            dm.from_date
+
+    FROM
+
+        dept_manager dm) as a
+
+ORDER BY -a.emp_no DESC;
