@@ -5,3 +5,5 @@ Recently, I am very interested in building my career in data.
 
 This Git page is dedicated for my data portofolio purposes.
 include here are excel manipulation, powerBI, Tableau, SQL projects and personal exercises.
+
+reach me on linkedIn : https://www.linkedin.com/in/almarsaterakahfi/
