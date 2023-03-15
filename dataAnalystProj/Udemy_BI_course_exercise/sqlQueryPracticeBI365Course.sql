@@ -190,43 +190,94 @@ where t.title = 'Manager'
 group by gender;
 
 SELECT
-
     *
-
 FROM
-
     (SELECT
-
         e.emp_no,
-
             e.first_name,
-
             e.last_name,
-
             NULL AS dept_no,
-
             NULL AS from_date
-
     FROM
-
         employees e
-
     WHERE
-
         last_name = 'Denis' UNION SELECT
-
         NULL AS emp_no,
-
             NULL AS first_name,
-
             NULL AS last_name,
-
             dm.dept_no,
-
             dm.from_date
-
     FROM
 
         dept_manager dm) as a
-
 ORDER BY -a.emp_no DESC;
+
+--
+
+select *
+from dept_manager
+where emp_no in
+	(select emp_no
+    from employees
+    where hire_date between '1990-01-01' and '1995-01-01');
+    
+    --
+    
+select *
+from employees e
+where exists
+	(select *
+    from titles t
+    where t.emp_no = e.emp_no
+    and title = 'Assistant Engineer');
+    
+    --
+    
+ select A.*
+ from
+(select e.emp_no as employee_id
+		, min(de.dept_no) as department_code,
+	(select emp_no
+	from dept_manager
+	where emp_no = 110022) as manager_id
+from employees e
+join dept_emp de on e.emp_no = de.emp_no
+where e.emp_no <= 10020
+group by e.emp_no
+order by e.emp_no) as A
+union select B.*
+from 
+(select e.emp_no as employee_id
+		, min(de.dept_no) as department_code,
+	(select emp_no
+	from dept_manager
+	where emp_no = 110039) as manager_id
+from employees e
+join dept_emp de on e.emp_no = de.emp_no
+where e.emp_no between '10021' and '10040'
+group by e.emp_no
+order by e.emp_no) as B
+union select C.*
+from
+(select e.emp_no as employee_id
+		, min(de.dept_no) as department_code,
+	(select emp_no
+	from dept_manager
+	where emp_no = 110039) as manager_id
+from employees e
+join dept_emp de on e.emp_no = de.emp_no
+where e.emp_no = '110022'
+group by e.emp_no
+order by e.emp_no) as C
+union select D.*
+from
+(select e.emp_no as employee_id
+		, min(de.dept_no) as department_code,
+	(select emp_no
+	from dept_manager
+	where emp_no = 110022) as manager_id
+from employees e
+join dept_emp de on e.emp_no = de.emp_no
+where e.emp_no = '110039'
+group by e.emp_no
+order by e.emp_no) as D;
