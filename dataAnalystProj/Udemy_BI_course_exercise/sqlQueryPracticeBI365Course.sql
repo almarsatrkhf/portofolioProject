@@ -231,7 +231,7 @@ where exists
     where t.emp_no = e.emp_no
     and title = 'Assistant Engineer');
     
-    --
+    -- NESTED SUBQUERIES	
     
  select A.*
  from
@@ -281,3 +281,51 @@ join dept_emp de on e.emp_no = de.emp_no
 where e.emp_no = '110039'
 group by e.emp_no
 order by e.emp_no) as D;
+
+-- STORED PROCEDURES
+use employees
+
+delimiter $$
+create procedure avg_salary()
+begin
+	select avg(salary)
+    from employees.salaries;
+end$$
+delimiter ;
+call avg_salary;
+call avg_salary();
+call employees.avg_salary;
+call employees.avg_salary();
+
+delimiter $$
+drop procedure if exists emp_avg_salary;
+create procedure emp_avg_salary(in input_emp_no integer)
+begin
+	select e.first_name, e.last_name, avg(s.salary) as avg_salary, t.title
+	from employees e
+		join
+        salaries s on e.emp_no = s.emp_no
+        join
+        titles t on e.emp_no = t.emp_no
+	where
+    e.emp_no = input_emp_no
+    group by e.first_name, e.last_name, t.title;
+end$$
+
+delimiter ;
+call emp_avg_salary(11300);
+
+drop procedure if exists out_emp_avg_salary;
+delimiter $$
+create procedure out_emp_avg_salary(in input_emp_no integer, out e_avg_salary decimal(10,2))
+begin
+	select avg(s.salary) into e_avg_salary
+	from employees e
+		join
+        salaries s on e.emp_no = s.emp_no
+	where
+    e.emp_no = input_emp_no;
+end$$
+delimiter ;
+call out_emp_avg_salary(11300, @e_avg_salary);
+select @e_avg_salary;
